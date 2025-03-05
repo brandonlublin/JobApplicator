@@ -1,0 +1,31 @@
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filterPill {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.filterPill:hover {
+  background-color: #d0d0d0;
+}
+
+.filterPill.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.filterPill:focus {
+  outline: none;
+  border-color: #007bff;
+}

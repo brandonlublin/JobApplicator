@@ -23,12 +23,12 @@ const App: React.FC = () => {
         <Route path="/" element={
             <div>
               <h1>Job Listings</h1>
-              <Link to="/new-job">Add a Job</Link>
+              <Link to="/my-jobs">Add a Job</Link>
               <JobSearch />
             </div>
           } />
           <Route
-            path="/new-job"
+            path="/my-jobs"
             element={
               <div>
                 <h1>Add Job</h1>

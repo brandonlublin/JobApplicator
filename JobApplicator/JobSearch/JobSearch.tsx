@@ -1,101 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { JobPosting, searchJobs } from '../api/jobs.api'; // Assuming this type is already defined
-import styles from './jobsearch.module.css';
+import React, { useState, useEffect } from 'react';
+import { JobPosting } from '../api/jobs.api';
+import { searchJobs } from '../api/jobs.api';
+import styles from './JobSearch.module.css';
+import JobCard from '../JobCard/JobCard';
+import SearchBar from '../SearchBar/SearchBar';
+import FilterPills from '../FilterPills/FilterPills';
+import Pagination from '../Pagination/Pagination';
 
 const JobSearch: React.FC = () => {
   const [jobListings, setJobListings] = useState<JobPosting[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('developer jobs in chicago');
-  const [appliedJobs, setAppliedJobs] = useState<JobPosting[]>([]);
+  const [searchQuery, setSearchQuery] = useState('Software Engineer roles near Seattle');
+  const [activeFilters, setActiveFilters] = useState<{ [key: string]: boolean }>({
+    hasSalary: false,
+    job_is_remote: false,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasSearched, setHasSearched] = useState(false); // Ensure we don't show empty results before first search
 
-  useEffect(() => {
-    const getJobPostings = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get('http://localhost:3000/api/jobs');
-        console.log('response', response);
-        setJobListings(response.data);
-      } catch (err) {
+  const toggleFilter = (filterId: string) => {
+    setActiveFilters((prev) => ({ ...prev, [filterId]: !prev[filterId] }));
+  };
 
-        setError('Error fetching job listings');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getJobPostings();
-  }, []);
+  const JOBS_PER_PAGE = 10;
 
   const handleSearch = async () => {
     setLoading(true);
-
+    setError(null);
+    setHasSearched(true);
+    setCurrentPage(1);
+  
     try {
-      const response = await searchJobs(searchQuery);
-      setJobListings(response);
+      const { jobs, totalPages } = await searchJobs(searchQuery, 1, JOBS_PER_PAGE);
+      setJobListings(jobs);
+      setTotalPages(totalPages);
     } catch (err) {
-      setError('Error searching job listings');
+      setError('Failed to fetch job listings');
     } finally {
       setLoading(false);
     }
   };
-
-  const handleApply = async (job: JobPosting) => {
+  
+  const handlePageChange = async (page: number) => {
+    setCurrentPage(page);
+    setLoading(true);
+    setError(null);
+  
     try {
-      await axios.post('http://localhost:3000/api/apply', {
-        jobId: job._id,
-        userId: 'user123',  // Assuming you track a user ID
-      });
-      setAppliedJobs((prevState) => [...prevState, job]);
+      const { jobs } = await searchJobs(searchQuery, page, JOBS_PER_PAGE);
+      setJobListings(jobs);
     } catch (err) {
-      setError('Error applying for job');
+      setError('Failed to fetch job listings');
+    } finally {
+      setLoading(false);
     }
   };
+  
 
-  const handleAddToAppliedJobs = (job: JobPosting) => {
-    setAppliedJobs([...appliedJobs, job]);
-  };
+  const filteredJobs = jobListings.filter((job) => {
+    if (activeFilters.hasSalary && (!job.job_min_salary && !job.job_max_salary)) return false;
+    if (activeFilters.job_is_remote && !job.job_is_remote) return false;
+    return true;
+  });
 
   return (
     <div className={styles.jobSearch}>
-      <input
-        type="text"
-        className={styles.searchInput}
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search for jobs"
-      />
-      <button className={styles.searchButton} onClick={handleSearch}>Search</button>
-
+      <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
+      <FilterPills activeFilters={activeFilters} onToggle={toggleFilter} />
       {loading && <p className={styles.loading}>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
-
-      <ul className={styles.jobList}>
-        {jobListings?.map((job, index) => (
-          <li key={index} className={styles.jobListing}>
-            <h3 className={styles.jobTitle}>{job.job_title}</h3>
-            <p className={styles.jobDetails}>{job.company_name} - {job.location}</p>
-            <a className={styles.jobLink} href={job.job_url} target="_blank" rel="noopener noreferrer">View Job</a>
-
-            {/* Apply Button */}
-            <button
-              className={styles.applyButton}
-              onClick={() => handleApply(job)}
-            >
-              Apply
-            </button>
-            {appliedJobs.some((appliedJob) => appliedJob.job_url === job.job_url) ? (
-              <button
-                className={styles.addToAppliedButton}
-                onClick={() => handleAddToAppliedJobs(job)}
-              >
-                Added to Applied Jobs
-              </button>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+      {hasSearched && jobListings.length === 0 && !loading && <p>No jobs found.</p>}
+      {jobListings.length > 0 && (
+        <>
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          <ul className={styles.jobList}>
+            {filteredJobs.map((job) => (
+              <JobCard key={job.job_url} job={job} />
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 };

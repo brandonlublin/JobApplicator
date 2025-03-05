@@ -3,6 +3,7 @@ import { Job } from '../types';
 import styles from './JobForm.module.css';
 import FormInput from './FormInput';
 import FormSelect from './FormSelect';
+import axios from 'axios';
 
 interface JobFormProps {
   onSubmit: (job: Job) => void;
@@ -10,15 +11,21 @@ interface JobFormProps {
 
 const JobForm: React.FC<JobFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<Job>({
-    id: '',
-    company: '',
-    payScale: '',
-    roleType: '',
-    isReferral: false,
-    inInterviewLoop: false,
-    interviewStage: '',
-    interestLevel: 1,
+    job_id: '',
+    job_title: '',
+    employer_name: '',
+    job_min_salary: 0,
+    job_max_salary: 0,
+    job_employment_type: '',
+    is_referral: false,
+    in_interview_loop: false,
+    interview_stage: '',
+    interest_level: 1,
+    manually_added: false,
+    job_location: '',
   });
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,21 +35,49 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit }) => {
     setFormData({ ...formData, [e.target.name]: e.target.checked });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ ...formData, id: Date.now().toString() });
-    setFormData({ id: '', company: '', payScale: '', roleType: '', isReferral: false, inInterviewLoop: false, interviewStage: '', interestLevel: 1 });
+    const newJob = { ...formData, job_id: Date.now().toString() };
+
+    try {
+      await axios.post('http://localhost:3000/api/applied-jobs', {
+        jobId: newJob.job_id,
+        jobData: newJob,
+      });
+      onSubmit(newJob);
+      setFormData({
+        job_id: '',
+        job_title: '',
+        employer_name: '',
+        job_min_salary: 0,
+        job_max_salary: 0,
+        job_employment_type: '',
+        is_referral: false,
+        in_interview_loop: false,
+        interview_stage: '',
+        interest_level: 1,
+        manually_added: false,
+        job_location: '',
+      });
+    } catch (err) {
+      setError('Error adding job to applied jobs');
+      console.error(err);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <FormInput type="text" name="company" placeholder="Company" value={formData.company} onChange={handleChange} />
-      <FormInput type="text" name="payScale" placeholder="Pay Scale" value={formData.payScale} onChange={handleChange} />
-      <FormSelect name="roleType" value={formData.roleType} options={['Full-Time', 'Part-Time', 'Contract']} onChange={handleChange} />
-      <FormInput type="checkbox" name="isReferral" value={formData.isReferral} onChange={handleCheckboxChange} label="Referral" />
-      <FormInput type="checkbox" name="inInterviewLoop" value={formData.inInterviewLoop} onChange={handleCheckboxChange} label="In Interview Loop" />
-      {formData.inInterviewLoop && <FormInput type="text" name="interviewStage" placeholder="Interview Stage" value={formData.interviewStage} onChange={handleChange} />}
-      <FormInput type="number" name="interestLevel" min={1} max={10} value={formData.interestLevel} onChange={handleChange} />
+      {error && <p className={styles.error}>{error}</p>}
+      <FormInput type="text" name="job_title" placeholder="Job Title" value={formData.job_title} onChange={handleChange} />
+      <FormInput type="text" name="employer_name" placeholder="Employer Name" value={formData.employer_name} onChange={handleChange} />
+      <FormInput type="text" name="job_location" placeholder="Job Location" value={formData.job_location} onChange={handleChange} />
+      <FormInput type="number" name="job_min_salary" placeholder="Min Salary" value={formData.job_min_salary} onChange={handleChange} />
+      <FormInput type="number" name="job_max_salary" placeholder="Max Salary" value={formData.job_max_salary} onChange={handleChange} />
+      <FormSelect name="job_employment_type" value={formData.job_employment_type} options={['Full-Time', 'Part-Time', 'Contract']} onChange={handleChange} />
+      <FormInput type="checkbox" name="is_referral" value={formData.is_referral} onChange={handleCheckboxChange} label="Referral" />
+      <FormInput type="checkbox" name="in_interview_loop" value={formData.in_interview_loop} onChange={handleCheckboxChange} label="In Interview Loop" />
+      {formData.in_interview_loop && <FormInput type="text" name="interview_stage" placeholder="Interview Stage" value={formData.interview_stage} onChange={handleChange} />}
+      <FormInput type="number" name="interest_level" min={1} max={10} value={formData.interest_level} onChange={handleChange} />
       <button type="submit" className={styles.button}>Add Job</button>
     </form>
   );
