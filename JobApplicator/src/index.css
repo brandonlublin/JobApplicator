@@ -28,12 +28,20 @@ body {
   padding: 20px;
 }
 
+.myJobsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.addJobButton {
+  width: 150px;
+}
+
 .app {
-  width: 1000px;
-  background: #1e1e1e;
+  width: 1500px;
   padding: 30px;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #333; 
 }
 
 h1 {

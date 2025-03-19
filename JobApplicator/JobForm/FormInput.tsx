@@ -13,10 +13,23 @@ interface FormInputProps {
 }
 
 const FormInput: React.FC<FormInputProps> = ({ label, type, name, value, onChange, placeholder, min, max }) => (
-  <label className={styles.label}>
-    {label && <span>{label}</span>}
-    <input type={type} name={name} value={value as string | number} onChange={onChange} placeholder={placeholder} min={min} max={max} className={styles.input} />
-  </label>
+  <div className={styles.inputWrapper}>
+    <label className={styles.label}>
+      {label && type !== 'checkbox' && <span>{label}</span>}
+      <input
+        type={type}
+        name={name}
+        value={type === 'checkbox' ? undefined : (value as string | number)}
+        checked={type === 'checkbox' ? Boolean(value) : undefined}
+        onChange={onChange}
+        placeholder={type !== 'checkbox' ? placeholder : undefined}
+        min={min}
+        max={max}
+        className={type === 'checkbox' ? styles.checkbox : styles.input}
+      />
+      {label && type === 'checkbox' && <div>{label}</div>}
+    </label>
+  </div>
 );
 
 export default FormInput;

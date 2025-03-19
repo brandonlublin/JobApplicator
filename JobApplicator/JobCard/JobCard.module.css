@@ -16,6 +16,14 @@
   border: 1px solid lightgray;
   padding: 12px;
   box-shadow: inherit;
+  min-width: 100px;
+  min-height: 100px;
+}
+
+.logoApplyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .jobTitle {

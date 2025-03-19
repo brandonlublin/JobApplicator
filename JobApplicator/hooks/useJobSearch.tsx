@@ -8,7 +8,7 @@ export const useJobSearch = () => {
   const handleSearch = async (query: string) => {
     setLoading(true);
     setError(null);
-    console.log('this call', query);
+
     try {
       const response = await searchJobs(query);
       setJobListings(response.map(job => ({ ...job, applied: false })));

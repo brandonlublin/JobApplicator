@@ -9,12 +9,14 @@ interface FormSelectProps {
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({ name, value, options, onChange }) => (
-  <select name={name} value={value} onChange={onChange} className={styles.select}>
-    <option value="">Select {name}</option>
-    {options.map(option => (
-      <option key={option} value={option}>{option}</option>
-    ))}
-  </select>
+  <div className={styles.selectWrapper}>
+    <select name={name} value={value} onChange={onChange} className={styles.select}>
+      <option value="">Select {name}</option>
+      {options.map(option => (
+        <option key={option} value={option}>{option}</option>
+      ))}
+    </select>
+  </div>
 );
 
 export default FormSelect;

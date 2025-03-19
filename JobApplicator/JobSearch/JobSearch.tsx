@@ -6,6 +6,7 @@ import JobCard from '../JobCard/JobCard';
 import SearchBar from '../SearchBar/SearchBar';
 import FilterPills from '../FilterPills/FilterPills';
 import Pagination from '../Pagination/Pagination';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const JobSearch: React.FC = () => {
   const [jobListings, setJobListings] = useState<JobPosting[]>([]);
@@ -68,12 +69,12 @@ const JobSearch: React.FC = () => {
   return (
     <div className={styles.jobSearch}>
       <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
-      <FilterPills activeFilters={activeFilters} onToggle={toggleFilter} />
-      {loading && <p className={styles.loading}>Loading...</p>}
+      {loading && <LoadingSpinner />}
       {error && <p className={styles.error}>{error}</p>}
       {hasSearched && jobListings.length === 0 && !loading && <p>No jobs found.</p>}
       {jobListings.length > 0 && (
         <>
+          <FilterPills activeFilters={activeFilters} onToggle={toggleFilter} />
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           <ul className={styles.jobList}>
             {filteredJobs.map((job) => (

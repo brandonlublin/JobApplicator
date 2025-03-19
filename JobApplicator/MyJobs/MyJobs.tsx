@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Job } from '../types';
 import axios from 'axios';
-import styles from './JobList.module.css';
+import styles from './MyJobs.module.css';
 import { AppliedJobs } from '../models/AppliedJobs';
 import JobCard from '../JobCard/JobCard';
 interface JobListProps {
   onDelete: (id: string) => void;
 }
 
-const JobList: React.FC<JobListProps> = ({  }) => {
+const MyJobs: React.FC<JobListProps> = ({  }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [error, setError] = useState<string | null>(null);
@@ -61,4 +61,4 @@ const JobList: React.FC<JobListProps> = ({  }) => {
   );
 };
 
-export default JobList;
+export default MyJobs;

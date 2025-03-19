@@ -7,41 +7,23 @@ export interface JobPosting {
   job_url: string;
 }
 
-const API_URL = 'https://jsearch.p.rapidapi.com/search';
-
-const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
-if (!RAPIDAPI_KEY) {
-  throw new Error('API key is missing from environment variables');
-}
-
-const HEADERS = {
-  'x-rapidapi-key': RAPIDAPI_KEY,
-  'x-rapidapi-host': 'jsearch.p.rapidapi.com',
-};
+const API_URL = 'http://localhost:3000/api/jobs';
 
 export const searchJobs = async (
   query: string,
   page: number = 1,
   numPages: number = 10
 ): Promise<{ jobs: JobPosting[]; totalPages: number }> => {
-  console.log('numPages', numPages);
   try {
-    const response: AxiosResponse = await fetch(
-      `${API_URL}?query=${query}&page=${page}&num_pages=${numPages}&country=us&date_posted=all`,
-      {
-        method: 'GET',
-        headers: HEADERS,
-      }
-    );
+    const response = await fetch(`${API_URL}?query=${query}&page=${page}&numPages=${numPages}`, {
+      method: 'GET',
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch job listings');
     }
 
-    const data = await response.json();
-    const totalPages = data.total_pages || 1;
-
-    return { jobs: data.data, totalPages };
+    return response.json();
   } catch (error) {
     console.error('Error searching job listings:', error);
     throw new Error('Failed to fetch job listings');

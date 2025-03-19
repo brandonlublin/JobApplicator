@@ -1,0 +1,54 @@
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 140px; /* Fixed width to prevent resizing */
+  justify-content: space-between;
+}
+
+.separator {
+  width: 1px;
+  height: 16px;
+  background: white;
+}
+
+.arrow {
+  font-size: 14px;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  width: 140px; /* Match button width */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 8px 0;
+  z-index: 10;
+}
+
+.dropdownMenu li {
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dropdownMenu li:hover {
+  background: #f2f2f2;
+}
