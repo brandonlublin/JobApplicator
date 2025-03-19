@@ -1,0 +1,83 @@
+/* JobCard.module.css */
+.jobCard {
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+  color: black;
+  width: 100%;
+}
+
+.logo {
+  max-width: 100px;
+  margin-bottom: 8px;
+  border: 1px solid lightgray;
+  padding: 12px;
+  box-shadow: inherit;
+  min-width: 100px;
+  min-height: 100px;
+}
+
+.logoApplyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jobTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.employerName {
+  font-size: 20px;
+  color: #555;
+  font-weight: bold;
+  margin-left: 24px;
+}
+
+.website {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.employmentType, .publisher, .description {
+  font-size: 14px;
+  color: #333;
+}
+
+.salaryRange {
+  font-size: 14px;
+  color: black;
+  font-weight: bold;
+}
+
+.applyContainer {
+  margin-top: 12px;
+}
+
+.applyList {
+  list-style: none;
+  padding: 0;
+}
+
+.applyItem {
+  margin-bottom: 4px;
+}
+
+.applyLink {
+  color: #28a745;
+  text-decoration: none;
+}
+
+.applyLink:hover {
+  text-decoration: underline;
+}
+
+.primaryDetails {
+  display: flex;
+  align-items: center;
+}

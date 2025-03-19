@@ -1,0 +1,112 @@
+.jobList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(1000px, 1fr));
+  gap: 16px;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.jobCard {
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: black;
+  transition: transform 0.2s ease-in-out;
+}
+
+.jobCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.primaryDetails {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.logo {
+  max-width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border: 1px solid lightgray;
+  padding: 8px;
+  border-radius: 6px;
+  background: white;
+  box-shadow: inherit;
+}
+
+.jobTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+
+.employerName {
+  font-size: 16px;
+  color: #555;
+  font-weight: bold;
+}
+
+.website {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.website:hover {
+  text-decoration: underline;
+}
+
+.employmentType, 
+.publisher, 
+.description {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
+}
+.description {
+  border: 1px solid gray;
+  border-radius: 2%;
+  padding: 10px;
+}
+
+.salaryRange {
+  font-size: 14px;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.applyContainer {
+  margin-top: 12px;
+}
+
+.applyList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.applyItem {
+  margin-bottom: 4px;
+}
+
+.applyLink {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 6px;
+  background-color: #28a745;
+  color: white;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.applyLink:hover {
+  background-color: #218838;
+}
