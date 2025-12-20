@@ -27,22 +27,32 @@ Railway is the easiest option as it handles both your app and MongoDB in one pla
 ### Step 3: Add MongoDB
 
 1. In your Railway project, click "+ New" → "Database" → "Add MongoDB"
-2. Railway will create a MongoDB instance and provide a connection string
+2. Railway will create a MongoDB instance
+3. **To find the connection string:**
+   - Click on the MongoDB service in your Railway project
+   - Go to the "Variables" tab
+   - Look for `MONGO_URL` or `MONGODB_URL` - this is your connection string
+   - Copy this value (it will look like: `mongodb://mongo:27017/...` or `mongodb+srv://...`)
 
 ### Step 4: Configure Environment Variables
 
-In your Railway project settings, add these environment variables:
+1. In your Railway project, click on your **web service** (not the MongoDB service)
+2. Go to the **"Variables"** tab
+3. Click **"+ New Variable"** and add each of these:
 
-```
-RAPIDAPI_KEY=your_rapidapi_key_here
-MONGODB_URI=your_mongodb_connection_string_from_railway
-NODE_ENV=production
-PORT=3000
-CLIENT_URL=https://your-app-name.railway.app
-VITE_API_BASE_URL=https://your-app-name.railway.app/api
-```
+   - **Variable:** `RAPIDAPI_KEY` | **Value:** `your_rapidapi_key_here`
+   - **Variable:** `MONGODB_URI` | **Value:** `paste_the_connection_string_from_step_3`
+   - **Variable:** `NODE_ENV` | **Value:** `production`
+   - **Variable:** `CLIENT_URL` | **Value:** `https://your-app-name.railway.app` (update after first deploy)
+   - **Variable:** `VITE_API_BASE_URL` | **Value:** `https://your-app-name.railway.app/api` (update after first deploy)
 
-**Important:** For the frontend to work, you also need to set `VITE_API_BASE_URL` as a build-time variable. Railway will automatically use this during the build.
+**Important Notes:**
+- After adding `MONGODB_URI`, Railway will automatically redeploy
+- For `VITE_API_BASE_URL`: This needs to be set **before** the build runs. You may need to trigger a redeploy after setting it
+- If you get an API key error, make sure:
+  1. The variable name is exactly `RAPIDAPI_KEY` (case-sensitive)
+  2. There are no extra spaces in the value
+  3. You've redeployed after adding the variable (Railway usually does this automatically)
 
 ### Step 5: Deploy
 
@@ -144,8 +154,24 @@ Follow the backend deployment steps from Option 1 or 2.
 ### MongoDB connection issues
 
 - Verify `MONGODB_URI` is correct
+- **To find MongoDB connection string in Railway:**
+  1. Click on your MongoDB service (not the web service)
+  2. Go to "Variables" tab
+  3. Look for `MONGO_URL` or `MONGODB_URL` 
+  4. Copy that value to your web service's `MONGODB_URI` variable
 - Check if MongoDB instance is running
 - Ensure network access is allowed (if using cloud MongoDB)
+
+### API Key not found error
+
+If you see "API key is missing from environment variables" even after adding `RAPIDAPI_KEY`:
+
+1. **Check the variable name:** It must be exactly `RAPIDAPI_KEY` (case-sensitive, no spaces)
+2. **Check the variable location:** Make sure it's in your **web service** variables, not the MongoDB service
+3. **Redeploy:** After adding the variable, Railway should auto-redeploy, but you can manually trigger one:
+   - Go to your web service → "Deployments" tab → Click "Redeploy"
+4. **Check logs:** Go to "Deployments" → Click on the latest deployment → Check the logs to see if the variable is being read
+5. **Verify the value:** Make sure there are no extra spaces or quotes in the API key value
 
 ### Build fails
 
