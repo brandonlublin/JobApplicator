@@ -112,3 +112,33 @@
 .levelOption span {
   flex: 1;
 }
+
+@media (max-width: 768px) {
+  .filters {
+    margin: var(--spacing-md) 0;
+    gap: var(--spacing-xs);
+  }
+
+  .filterPill {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.75rem;
+  }
+
+  .levelDropdown {
+    min-width: 160px;
+    right: 0;
+    left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .filterPill {
+    padding: 8px var(--spacing-sm);
+    font-size: 0.6875rem;
+  }
+
+  .levelDropdown {
+    min-width: 140px;
+    font-size: 0.8125rem;
+  }
+}

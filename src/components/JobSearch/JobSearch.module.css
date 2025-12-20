@@ -36,3 +36,33 @@
   font-size: 1.125rem;
   font-weight: 500;
 }
+
+@media (max-width: 768px) {
+  .jobList {
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .jobSearch > p {
+    padding: var(--spacing-xl);
+    font-size: 1rem;
+  }
+
+  .error {
+    padding: var(--spacing-md);
+    font-size: 0.875rem;
+    margin: var(--spacing-md) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .jobList {
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+  }
+
+  .jobSearch > p {
+    padding: var(--spacing-lg);
+    font-size: 0.9375rem;
+  }
+}

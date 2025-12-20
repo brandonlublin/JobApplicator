@@ -88,3 +88,34 @@
 .searchButton:active {
   transform: translateY(0);
 }
+
+@media (max-width: 768px) {
+  .searchBar {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+  }
+
+  .searchInput {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 0.9375rem;
+  }
+
+  .searchButton {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: 0.9375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchBar {
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-sm);
+  }
+
+  .searchInput {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}

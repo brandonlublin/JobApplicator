@@ -58,3 +58,34 @@
   border-color: var(--primary-light);
 }
 
+@media (max-width: 768px) {
+  .themeToggle {
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .themeToggle {
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    padding: 6px var(--spacing-xs);
+  }
+
+  .label {
+    display: none;
+  }
+
+  .themeToggle {
+    min-width: 36px;
+    justify-content: center;
+  }
+}
+
