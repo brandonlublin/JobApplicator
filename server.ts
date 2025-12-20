@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import { connectDB } from './src/server/config/database';
 import jobsRouter from './src/server/routes/jobs';
 import appliedJobsRouter from './src/server/routes/appliedJobs';
@@ -27,8 +27,16 @@ const PORT = process.env.PORT || 3000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Request logging middleware (early, to catch all requests)
+app.use((req, _res, next) => {
+  console.log(`📥 ${req.method} ${req.path}`);
+  next();
+});
+
 if (isProduction) {
   const distPath = path.join(__dirname, 'dist');
+  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  
   console.log('📁 Looking for dist folder at:', distPath);
   console.log('   Current working directory:', process.cwd());
   console.log('   __dirname:', __dirname);
@@ -49,19 +57,30 @@ if (isProduction) {
     console.error('   Make sure "npm run build" runs before starting the server.');
   }
   
-  // Serve static files from dist folder
+  // Explicit root route handler - MUST come before static middleware
+  app.get('/', (_req, res) => {
+    console.log('   🏠 Explicit root route handler called');
+    try {
+      const htmlContent = readFileSync(indexPath, 'utf-8');
+      console.log(`   ✅ Read index.html (${htmlContent.length} bytes)`);
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.send(htmlContent);
+      console.log('   ✅ Sent index.html for root');
+    } catch (err) {
+      console.error('❌ Error serving root:', err);
+      res.status(500).send('Error loading application');
+    }
+  });
+  
+  // Serve static files from dist folder (assets, etc.)
+  // This will serve files like /assets/..., /vite.svg, etc.
   app.use(express.static(distPath, {
     maxAge: '1y',
     etag: true,
-    lastModified: true
+    lastModified: true,
+    index: false // Don't automatically serve index.html for directories
   }));
 }
-
-// Request logging middleware
-app.use((req, _res, next) => {
-  console.log(`📥 ${req.method} ${req.path}`);
-  next();
-});
 
 app.use(
   cors({
@@ -91,6 +110,15 @@ if (isProduction) {
   
   if (!existsSync(indexPath)) {
     console.error('❌ CRITICAL: index.html not found at:', indexPath);
+  } else {
+    // Read and log first few lines of index.html to verify it's correct
+    try {
+      const htmlContent = readFileSync(indexPath, 'utf-8');
+      console.log('   Index.html first 200 chars:', htmlContent.substring(0, 200));
+      console.log('   Index.html length:', htmlContent.length, 'bytes');
+    } catch (err) {
+      console.error('   Error reading index.html:', err);
+    }
   }
   
   // Catch-all handler: send back React's index.html file for all non-API routes
@@ -102,19 +130,19 @@ if (isProduction) {
     
     console.log(`   📄 Serving index.html for: ${req.path}`);
     
-    // Serve index.html for all other routes (React Router will handle routing)
-    res.sendFile(indexPath, { root: __dirname }, (err) => {
-      if (err) {
-        console.error('❌ Error sending index.html:', err);
-        console.error('   Error message:', err.message);
-        console.error('   Attempted path:', indexPath);
-        if (!res.headersSent) {
-          res.status(500).send('Error loading application');
-        }
-      } else {
-        console.log(`   ✅ Successfully served index.html for: ${req.path}`);
+    // Try reading and sending the file directly (more reliable than sendFile)
+    try {
+      const htmlContent = readFileSync(indexPath, 'utf-8');
+      console.log(`   ✅ Read index.html successfully (${htmlContent.length} bytes)`);
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.send(htmlContent);
+      console.log(`   ✅ Sent index.html for: ${req.path}`);
+    } catch (err) {
+      console.error('❌ Error reading/sending index.html:', err);
+      if (!res.headersSent) {
+        res.status(500).send('Error loading application');
       }
-    });
+    }
   });
 }
 
