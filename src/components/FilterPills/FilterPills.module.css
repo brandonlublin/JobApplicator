@@ -1,0 +1,114 @@
+.filters {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin: var(--spacing-lg) 0;
+}
+
+.filterPill {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  letter-spacing: 0.02em;
+}
+
+.filterPill:hover {
+  background-color: var(--gray-100);
+  border-color: var(--primary-light);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.filterPill.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--text-inverse);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+.filterPill.active:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.filterPill:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.levelFilterContainer {
+  position: relative;
+}
+
+.levelFilterButton {
+  position: relative;
+}
+
+.dropdownArrow {
+  font-size: 0.625rem;
+  margin-left: var(--spacing-xs);
+  transition: transform var(--transition-fast);
+}
+
+.levelDropdown {
+  position: absolute;
+  top: calc(100% + var(--spacing-xs));
+  left: 0;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  min-width: 180px;
+  margin-top: var(--spacing-xs);
+  animation: slideDown var(--transition-fast) ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.levelOption {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.levelOption:hover {
+  background: var(--bg-secondary);
+}
+
+.levelOption input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.levelOption span {
+  flex: 1;
+}

@@ -1,0 +1,38 @@
+.jobSearch {
+  width: 100%;
+}
+
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: 0;
+  margin: var(--spacing-xl) 0;
+  list-style: none;
+}
+
+.error {
+  color: var(--danger);
+  background: #fef2f2;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--danger);
+  font-weight: 500;
+  margin: var(--spacing-lg) 0;
+  text-align: center;
+  font-size: 0.9375rem;
+}
+
+[data-theme='dark'] .error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-left-color: #fca5a5;
+}
+
+.jobSearch > p {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-2xl);
+  font-size: 1.125rem;
+  font-weight: 500;
+}
