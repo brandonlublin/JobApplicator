@@ -51,3 +51,4 @@ export const AppliedJobs: Model<AppliedJobDocument> = mongoose.model<AppliedJobD
   appliedJobSchema
 );
 
+

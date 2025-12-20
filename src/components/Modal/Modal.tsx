@@ -43,3 +43,4 @@ const Modal = ({ isOpen, onClose, onApply }: ModalProps) => {
 
 export default Modal;
 
+

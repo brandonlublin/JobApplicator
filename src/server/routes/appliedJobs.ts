@@ -92,3 +92,4 @@ router.delete('/applied-jobs/:id', async (req: Request, res: Response) => {
 
 export default router;
 
+
