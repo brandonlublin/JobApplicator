@@ -49,8 +49,19 @@ if (isProduction) {
     console.error('   Make sure "npm run build" runs before starting the server.');
   }
   
-  app.use(express.static(distPath));
+  // Serve static files from dist folder
+  app.use(express.static(distPath, {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true
+  }));
 }
+
+// Request logging middleware
+app.use((req, _res, next) => {
+  console.log(`📥 ${req.method} ${req.path}`);
+  next();
+});
 
 app.use(
   cors({
@@ -63,12 +74,47 @@ app.use(bodyParser.json());
 
 connectDB();
 
+// Health check endpoint
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// API routes must come before the catch-all route
 app.use('/api', jobsRouter);
 app.use('/api', appliedJobsRouter);
 
+// Serve React app for all non-API routes in production
 if (isProduction) {
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  console.log('📄 Index.html path:', indexPath);
+  console.log('   Index.html exists:', existsSync(indexPath));
+  
+  if (!existsSync(indexPath)) {
+    console.error('❌ CRITICAL: index.html not found at:', indexPath);
+  }
+  
+  // Catch-all handler: send back React's index.html file for all non-API routes
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API route not found' });
+    }
+    
+    console.log(`   📄 Serving index.html for: ${req.path}`);
+    
+    // Serve index.html for all other routes (React Router will handle routing)
+    res.sendFile(indexPath, { root: __dirname }, (err) => {
+      if (err) {
+        console.error('❌ Error sending index.html:', err);
+        console.error('   Error message:', err.message);
+        console.error('   Attempted path:', indexPath);
+        if (!res.headersSent) {
+          res.status(500).send('Error loading application');
+        }
+      } else {
+        console.log(`   ✅ Successfully served index.html for: ${req.path}`);
+      }
+    });
   });
 }
 
