@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync, readdirSync } from 'fs';
 import { connectDB } from './src/server/config/database';
 import jobsRouter from './src/server/routes/jobs';
 import appliedJobsRouter from './src/server/routes/appliedJobs';
@@ -27,7 +28,28 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
-  app.use(express.static(path.join(__dirname, 'dist')));
+  const distPath = path.join(__dirname, 'dist');
+  console.log('📁 Looking for dist folder at:', distPath);
+  console.log('   Current working directory:', process.cwd());
+  console.log('   __dirname:', __dirname);
+  
+  // Check if dist folder exists
+  const distExists = existsSync(distPath);
+  console.log('   Dist folder exists:', distExists);
+  
+  if (distExists) {
+    try {
+      const files = readdirSync(distPath);
+      console.log('   Files in dist:', files.slice(0, 10).join(', '), files.length > 10 ? '...' : '');
+    } catch (err) {
+      console.error('   Error reading dist folder:', err);
+    }
+  } else {
+    console.error('   ⚠️  WARNING: dist folder not found! Frontend may not be built.');
+    console.error('   Make sure "npm run build" runs before starting the server.');
+  }
+  
+  app.use(express.static(distPath));
 }
 
 app.use(
