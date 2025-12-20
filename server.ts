@@ -58,12 +58,16 @@ if (isProduction) {
   }
   
   // Explicit root route handler - MUST come before static middleware
-  app.get('/', (_req, res) => {
+  app.get('/', (req, res) => {
     console.log('   🏠 Explicit root route handler called');
+    console.log('   Request URL:', req.url);
+    console.log('   Request path:', req.path);
+    console.log('   Request originalUrl:', req.originalUrl);
     try {
       const htmlContent = readFileSync(indexPath, 'utf-8');
       console.log(`   ✅ Read index.html (${htmlContent.length} bytes)`);
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.send(htmlContent);
       console.log('   ✅ Sent index.html for root');
     } catch (err) {
