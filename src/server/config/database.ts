@@ -12,25 +12,25 @@ export const connectDB = async (): Promise<void> => {
     });
     
     isDBConnected = true;
-    console.log('✅ Connected to MongoDB');
+    console.log('Connected to MongoDB');
     
     mongoose.connection.on('disconnected', () => {
       isDBConnected = false;
-      console.warn('⚠️  MongoDB disconnected');
+      console.warn('MongoDB disconnected');
     });
     
     mongoose.connection.on('reconnected', () => {
       isDBConnected = true;
-      console.log('✅ MongoDB reconnected');
+      console.log('MongoDB reconnected');
     });
     
     mongoose.connection.on('error', (err) => {
       isDBConnected = false;
-      console.error('❌ MongoDB connection error:', err);
+      console.error('MongoDB connection error:', err);
     });
   } catch (err) {
     isDBConnected = false;
-    console.error('❌ MongoDB connection error:', err);
+    console.error('MongoDB connection error:', err);
   }
 };
 

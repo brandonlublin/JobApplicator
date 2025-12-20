@@ -8,13 +8,7 @@ const getApiKey = (): string => {
   const key = process.env.RAPIDAPI_KEY || process.env.VITE_API_KEY;
   
   if (!key) {
-    console.error('❌ API key is missing from environment variables');
-    console.error('   Please set RAPIDAPI_KEY in your environment variables');
-    const apiVars = Object.keys(process.env).filter(k => 
-      k.includes('API') || k.includes('KEY') || k.includes('RAPID')
-    );
-    console.error('   Available env vars with API/KEY:', apiVars.length > 0 ? apiVars.join(', ') : 'none found');
-    console.error('   All env vars:', Object.keys(process.env).slice(0, 20).join(', '), '...');
+    console.error('RAPIDAPI_KEY environment variable is not set');
     throw new Error('RAPIDAPI_KEY environment variable is not set');
   }
   
