@@ -2,15 +2,17 @@ import styles from './JobForm.module.css';
 
 interface FormSelectProps {
   name: string;
+  label?: string;
   value: string;
   options: string[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const FormSelect = ({ name, value, options, onChange }: FormSelectProps) => (
+const FormSelect = ({ name, label, value, options, onChange }: FormSelectProps) => (
   <div className={styles.selectWrapper}>
-    <select name={name} value={value} onChange={onChange} className={styles.select}>
-      <option value="">Select {name}</option>
+    {label && <label htmlFor={name} className={styles.label}>{label}</label>}
+    <select id={name} name={name} value={value} onChange={onChange} className={styles.select}>
+      <option value="">Select an option</option>
       {options.map((option) => (
         <option key={option} value={option}>
           {option}

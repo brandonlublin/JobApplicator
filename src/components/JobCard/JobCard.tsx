@@ -84,7 +84,17 @@ const JobCard = ({
 
       {isExpanded && (
         <div className={styles.expandedContent}>
-          {job?.employer_website && (
+          {job?.job_url && (
+            <a
+              className={styles.website}
+              href={job.job_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Job Posting
+            </a>
+          )}
+          {job?.employer_website && !job?.job_url && (
             <a
               className={styles.website}
               href={job.employer_website}
@@ -94,12 +104,46 @@ const JobCard = ({
               Company Website
             </a>
           )}
-          <div className={styles.detailsSection}>
-            <div>Employment Type: {job?.job_employment_type}</div>
-          </div>
-          <div className={styles.detailsSection}>
-            <div>Published by: {job?.job_publisher}</div>
-          </div>
+          
+          {job?.job_employment_type && (
+            <div className={styles.detailsSection}>
+              <strong>Employment Type:</strong> {job.job_employment_type}
+            </div>
+          )}
+          
+          {job?.appliedVia && (
+            <div className={styles.detailsSection}>
+              <strong>Applied Via:</strong> {job.appliedVia}
+            </div>
+          )}
+          
+          {job?.is_referral && (
+            <div className={styles.detailsSection}>
+              <strong>Referral:</strong> Yes
+            </div>
+          )}
+          
+          {job?.in_interview_loop && (
+            <div className={styles.detailsSection}>
+              <strong>Interview Status:</strong> In Process
+              {job?.interview_stage && (
+                <span> - {job.interview_stage}</span>
+              )}
+            </div>
+          )}
+          
+          {job?.interest_level && (
+            <div className={styles.detailsSection}>
+              <strong>Interest Level:</strong> {job.interest_level}/10
+            </div>
+          )}
+          
+          {job?.job_publisher && (
+            <div className={styles.detailsSection}>
+              <strong>Published by:</strong> {job.job_publisher}
+            </div>
+          )}
+          
           {job?.job_highlights?.Qualifications && (
             <div className={styles.detailsSection}>
               <h4>Job Qualifications:</h4>

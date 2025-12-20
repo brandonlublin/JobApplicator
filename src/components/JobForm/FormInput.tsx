@@ -20,25 +20,41 @@ const FormInput = ({
   placeholder,
   min,
   max,
-}: FormInputProps) => (
-  <div className={styles.inputWrapper}>
-    <label className={styles.label}>
-      {label && type !== 'checkbox' && <span>{label}</span>}
+}: FormInputProps) => {
+  if (type === 'checkbox') {
+    return (
+      <div className={styles.checkboxWrapper}>
+        <label className={styles.checkboxLabel}>
+          <input
+            type="checkbox"
+            name={name}
+            checked={Boolean(value)}
+            onChange={onChange}
+            className={styles.checkbox}
+          />
+          <span>{label}</span>
+        </label>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.inputWrapper}>
+      {label && <label htmlFor={name} className={styles.label}>{label}</label>}
       <input
         type={type}
+        id={name}
         name={name}
-        value={type === 'checkbox' ? undefined : (value as string | number)}
-        checked={type === 'checkbox' ? Boolean(value) : undefined}
+        value={value as string | number}
         onChange={onChange}
-        placeholder={type !== 'checkbox' ? placeholder : undefined}
+        placeholder={placeholder}
         min={min}
         max={max}
-        className={type === 'checkbox' ? styles.checkbox : styles.input}
+        className={styles.input}
       />
-      {label && type === 'checkbox' && <div>{label}</div>}
-    </label>
-  </div>
-);
+    </div>
+  );
+};
 
 export default FormInput;
 
