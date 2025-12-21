@@ -4,6 +4,7 @@ import Modal from './components/Modal/Modal';
 import JobSearch from './components/JobSearch/JobSearch';
 import MyJobs from './components/MyJobs/MyJobs';
 import ThemeToggle from './components/ThemeToggle/ThemeToggle';
+import NotFound from './components/NotFound/NotFound';
 
 const AppHeader = ({ onAddJob }: { onAddJob: () => void }) => {
   const location = useLocation();
@@ -55,6 +56,10 @@ const App = () => {
                 <MyJobs />
               </div>
             }
+          />
+          <Route
+            path="*"
+            element={<NotFound />}
           />
         </Routes>
 
