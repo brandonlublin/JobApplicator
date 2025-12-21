@@ -37,6 +37,123 @@
   font-weight: 500;
 }
 
+.defaultState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: var(--spacing-2xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.defaultContent {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+.defaultTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-md);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.defaultMessage {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-2xl);
+  line-height: 1.6;
+}
+
+.defaultFeatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+  text-align: left;
+}
+
+.feature {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  transition: all var(--transition-base);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+
+.feature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+  background: var(--bg-primary);
+}
+
+.feature:active {
+  transform: translateY(0);
+}
+
+.featureIcon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.feature h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs);
+}
+
+.feature p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.searchButton {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--text-inverse);
+  padding: var(--spacing-md) var(--spacing-2xl);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.searchButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary) 100%);
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.emptyMessage {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .jobList {
     gap: var(--spacing-md);
@@ -53,6 +170,31 @@
     font-size: 0.875rem;
     margin: var(--spacing-md) 0;
   }
+
+  .defaultState {
+    min-height: 50vh;
+    padding: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .defaultTitle {
+    font-size: 2rem;
+  }
+
+  .defaultMessage {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .defaultFeatures {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .feature {
+    padding: var(--spacing-md);
+  }
 }
 
 @media (max-width: 480px) {
@@ -64,5 +206,35 @@
   .jobSearch > p {
     padding: var(--spacing-lg);
     font-size: 0.9375rem;
+  }
+
+  .defaultState {
+    padding: var(--spacing-md);
+  }
+
+  .defaultTitle {
+    font-size: 1.75rem;
+  }
+
+  .defaultMessage {
+    font-size: 0.9375rem;
+  }
+
+  .featureIcon {
+    font-size: 1.5rem;
+  }
+
+  .feature h3 {
+    font-size: 1rem;
+  }
+
+  .feature p {
+    font-size: 0.875rem;
+  }
+
+  .searchButton {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1rem;
+    width: 100%;
   }
 }

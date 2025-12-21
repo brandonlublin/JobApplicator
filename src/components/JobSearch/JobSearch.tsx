@@ -60,14 +60,15 @@ const JobSearch = () => {
     return levels;
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (query?: string) => {
+    const searchTerm = query || searchQuery;
     setLoading(true);
     setError(null);
     setHasSearched(true);
     setCurrentPage(1);
 
     try {
-      const { jobs, totalPages } = await apiClient.searchJobs(searchQuery, 1);
+      const { jobs, totalPages } = await apiClient.searchJobs(searchTerm, 1);
       setJobListings(jobs);
       setTotalPages(totalPages);
     } catch (err) {
@@ -113,7 +114,80 @@ const JobSearch = () => {
       <SearchBar query={searchQuery} setQuery={setSearchQuery} onSearch={handleSearch} />
       {loading && <LoadingSpinner />}
       {error && <p className={styles.error}>{error}</p>}
-      {hasSearched && jobListings.length === 0 && !loading && <p>No jobs found.</p>}
+      {!hasSearched && !loading && !error && (
+        <div className={styles.defaultState}>
+          <div className={styles.defaultContent}>
+            <h2 className={styles.defaultTitle}>Find Your Next Opportunity</h2>
+            <p className={styles.defaultMessage}>
+              Search for jobs by role, location, or company. Use filters to narrow down results by salary, remote work, and experience level.
+            </p>
+            <div className={styles.defaultFeatures}>
+              <button 
+                className={styles.feature}
+                onClick={() => {
+                  setSearchQuery('Software Engineer');
+                  handleSearch('Software Engineer');
+                }}
+              >
+                <span className={styles.featureIcon}>🔍</span>
+                <div>
+                  <h3>Software Engineer</h3>
+                  <p>Search for software engineering roles</p>
+                </div>
+              </button>
+              <button 
+                className={styles.feature}
+                onClick={() => {
+                  setSearchQuery('Remote Software Engineer');
+                  setActiveFilters(prev => ({ ...prev, job_is_remote: true }));
+                  handleSearch('Remote Software Engineer');
+                }}
+              >
+                <span className={styles.featureIcon}>🏠</span>
+                <div>
+                  <h3>Remote Jobs</h3>
+                  <p>Find remote-friendly positions</p>
+                </div>
+              </button>
+              <button 
+                className={styles.feature}
+                onClick={() => {
+                  setSearchQuery('Software Engineer');
+                  setActiveFilters(prev => ({ ...prev, hasSalary: true }));
+                  handleSearch('Software Engineer');
+                }}
+              >
+                <span className={styles.featureIcon}>💰</span>
+                <div>
+                  <h3>Jobs with Salary</h3>
+                  <p>Find positions with salary information</p>
+                </div>
+              </button>
+              <button 
+                className={styles.feature}
+                onClick={() => {
+                  setSearchQuery('Senior Software Engineer');
+                  handleSearch('Senior Software Engineer');
+                }}
+              >
+                <span className={styles.featureIcon}>📊</span>
+                <div>
+                  <h3>Senior Roles</h3>
+                  <p>Search for senior-level positions</p>
+                </div>
+              </button>
+            </div>
+            <button className={styles.searchButton} onClick={() => handleSearch()}>
+              Start Searching
+            </button>
+          </div>
+        </div>
+      )}
+      {hasSearched && jobListings.length === 0 && !loading && (
+        <div className={styles.emptyState}>
+          <p className={styles.emptyMessage}>No jobs found. Try adjusting your search or filters.</p>
+        </div>
+      )}
       {jobListings.length > 0 && (
         <>
           <FilterPills 
