@@ -33,7 +33,6 @@ class ApiClient {
           );
         }
       }
-      console.error('Error searching jobs:', error);
       throw new Error('Failed to fetch job listings');
     }
   }
@@ -46,8 +45,14 @@ class ApiClient {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          const errorData = error.response.data as { message?: string; error?: string };
-          const errorMessage = errorData.message || errorData.error || error.response.statusText;
+          const errorData = error.response.data;
+          const errorMessage = (
+            errorData && 
+            typeof errorData === 'object' && 
+            ('message' in errorData || 'error' in errorData)
+          ) 
+            ? (errorData.message || errorData.error || error.response.statusText)
+            : error.response.statusText;
           
           if (error.response.status === 503) {
             throw new Error(
@@ -63,7 +68,6 @@ class ApiClient {
           );
         }
       }
-      console.error('Error fetching applied jobs:', error);
       throw new Error('Failed to fetch applied jobs');
     }
   }
@@ -75,7 +79,17 @@ class ApiClient {
         jobData,
       });
     } catch (error) {
-      console.error('Error applying for job:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        const errorData = error.response.data;
+        const errorMessage = (
+          errorData && 
+          typeof errorData === 'object' && 
+          ('message' in errorData || 'error' in errorData)
+        )
+          ? (errorData.message || errorData.error || 'Failed to apply for job')
+          : 'Failed to apply for job';
+        throw new Error(errorMessage);
+      }
       throw new Error('Failed to apply for job');
     }
   }
@@ -84,7 +98,17 @@ class ApiClient {
     try {
       await this.client.delete(`/applied-jobs/${id}`);
     } catch (error) {
-      console.error('Error deleting job:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        const errorData = error.response.data;
+        const errorMessage = (
+          errorData && 
+          typeof errorData === 'object' && 
+          ('message' in errorData || 'error' in errorData)
+        )
+          ? (errorData.message || errorData.error || 'Failed to delete job')
+          : 'Failed to delete job';
+        throw new Error(errorMessage);
+      }
       throw new Error('Failed to delete job');
     }
   }

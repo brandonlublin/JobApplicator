@@ -40,8 +40,8 @@ const ApplyDropdown = ({ applyOptions, handleApply }: ApplyDropdownProps) => {
       if (option.apply_link) {
         window.open(option.apply_link, '_blank', 'noopener,noreferrer');
       }
-    } catch (error) {
-      console.error('Error applying for job:', error);
+    } catch {
+      // Error is already handled by handleApply throwing
     }
   };
 

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Job, ApplyOption } from '../../types';
 import { apiClient } from '../../services/apiClient';
+import { extractYearsOfExperience, getDaysSincePosted, formatDaysSincePosted } from '../../helpers/jobHelpers';
 import ApplyDropdown from '../ApplyDropdown/ApplyDropdown';
 import placeholderImage from '../../assets/placeholder-image.png';
 import styles from './JobCard.module.css';
@@ -11,6 +12,7 @@ interface JobCardProps {
   onButtonClick?: () => void;
   isExpanded?: boolean;
   onExpandToggle?: () => void;
+  showYearsOfExperience?: boolean;
 }
 
 const JobCard = ({ 
@@ -18,7 +20,8 @@ const JobCard = ({
   isPreviouslyAppliedJob = false, 
   onButtonClick,
   isExpanded: controlledExpanded,
-  onExpandToggle
+  onExpandToggle,
+  showYearsOfExperience = false
 }: JobCardProps) => {
   const [internalExpanded, setInternalExpanded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +52,27 @@ const JobCard = ({
     onButtonClick?.();
   };
 
+  const yearsOfExperience = useMemo(() => {
+    const foundYears = extractYearsOfExperience(job);
+    if (foundYears.length > 0) {
+      const minYears = Math.min(...foundYears);
+      const maxYears = Math.max(...foundYears);
+      if (minYears === maxYears) {
+        return `${minYears}+ years`;
+      }
+      return `${minYears}-${maxYears} years`;
+    }
+    return null;
+  }, [job]);
+
+  const daysSincePosted = useMemo(() => {
+    const days = getDaysSincePosted(job);
+    return days !== null ? formatDaysSincePosted(days) : null;
+  }, [job]);
+
+  const hasSalary = job?.job_min_salary && job?.job_max_salary;
+  const shouldShowYears = showYearsOfExperience && yearsOfExperience;
+
   return (
     <div className={styles.jobCard} onClick={handleCardClick}>
       <div className={styles.logoApplyContainer}>
@@ -74,10 +98,24 @@ const JobCard = ({
         </div>
       </div>
       <p className={styles.location}>{job.job_location}</p>
-      {job?.job_min_salary && job?.job_max_salary && (
-        <p className={styles.salary}>
-          Salary Range: ${job.job_min_salary} - ${job.job_max_salary}
-        </p>
+      {(hasSalary || shouldShowYears || daysSincePosted) && (
+        <div className={styles.metaInfo}>
+          {hasSalary && (
+            <span className={styles.salary}>
+              Salary Range: ${job.job_min_salary} - ${job.job_max_salary}
+            </span>
+          )}
+          {shouldShowYears && (
+            <span className={styles.yearsOfExperience}>
+              {yearsOfExperience}
+            </span>
+          )}
+          {daysSincePosted && (
+            <span className={styles.postedDate}>
+              {daysSincePosted}
+            </span>
+          )}
+        </div>
       )}
       {job?.manually_added && <div className={styles.manuallyAdded}>Manually Added</div>}
       {error && <p className={styles.error}>{error}</p>}

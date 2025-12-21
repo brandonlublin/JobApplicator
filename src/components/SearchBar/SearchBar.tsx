@@ -3,14 +3,18 @@ import styles from './SearchBar.module.css';
 interface SearchBarProps {
   query: string;
   setQuery: (value: string) => void;
-  onSearch: () => void;
+  onSearch: (query?: string) => void;
 }
 
 const SearchBar = ({ query, setQuery, onSearch }: SearchBarProps) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      onSearch();
+      onSearch(query);
     }
+  };
+
+  const handleSearchClick = () => {
+    onSearch(query);
   };
 
   return (
@@ -23,7 +27,7 @@ const SearchBar = ({ query, setQuery, onSearch }: SearchBarProps) => {
         onKeyDown={handleKeyDown}
         placeholder="Search for jobs"
       />
-      <button className={styles.searchButton} onClick={onSearch}>
+      <button className={styles.searchButton} onClick={handleSearchClick}>
         Search
       </button>
     </div>

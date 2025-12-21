@@ -8,38 +8,54 @@ const getApiKey = (): string => {
   const key = process.env.RAPIDAPI_KEY || process.env.VITE_API_KEY;
   
   if (!key) {
-    console.error('RAPIDAPI_KEY environment variable is not set');
     throw new Error('RAPIDAPI_KEY environment variable is not set');
   }
   
   return key.trim();
 };
 
+const validatePageParams = (page: unknown): number => {
+  const pageNum = Number(page);
+  if (isNaN(pageNum) || pageNum < 1 || !Number.isInteger(pageNum)) {
+    return 1;
+  }
+  return Math.min(pageNum, 100); // Cap at 100 pages
+};
+
+const sanitizeQuery = (query: unknown): string => {
+  if (typeof query !== 'string' || !query.trim()) {
+    return '';
+  }
+  // Remove potentially dangerous characters and limit length
+  return query.trim().slice(0, 200);
+};
+
 router.get('/jobs', async (req: Request, res: Response) => {
-  const { query, page = 1 } = req.query;
-  const pageNum = Number(page) || 1;
+  const { query, page } = req.query;
+  const pageNum = validatePageParams(page);
   const JOBS_PER_PAGE = 10;
-  
-  // NOTE: JSearch API returns all results regardless of pagination params
-  // We manually paginate client-side by slicing the response array
-  // This is a known limitation of the API - num_pages parameter doesn't work as expected
+  const sanitizedQuery = sanitizeQuery(query);
+
+  if (!sanitizedQuery) {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
 
   try {
     const apiKey = getApiKey();
     
-    const response = await fetch(
-      `${API_URL}?query=${query}&page=1&num_pages=1&country=us&date_posted=all`,
-      {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': apiKey,
-          'x-rapidapi-host': 'jsearch.p.rapidapi.com',
-        },
-      }
-    );
+    const apiUrl = `${API_URL}?query=${encodeURIComponent(sanitizedQuery)}&page=${pageNum}&num_pages=1&country=us&date_posted=all`;
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': apiKey,
+        'x-rapidapi-host': 'jsearch.p.rapidapi.com',
+      },
+    });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch job listings');
+      const statusText = response.statusText || 'Unknown error';
+      throw new Error(`API request failed: ${response.status} - ${statusText}`);
     }
 
     const data = (await response.json()) as { 
@@ -48,24 +64,55 @@ router.get('/jobs', async (req: Request, res: Response) => {
       total?: number;
     };
     
-    const allJobs = Array.isArray(data.data) ? data.data : [];
-    const totalJobs = data.total || allJobs.length;
-    const totalPages = data.total_pages || Math.ceil(totalJobs / JOBS_PER_PAGE);
+    const jobs = Array.isArray(data.data) ? data.data : [];
     
-    const startIndex = (pageNum - 1) * JOBS_PER_PAGE;
-    const endIndex = startIndex + JOBS_PER_PAGE;
-    const paginatedJobs = allJobs.slice(startIndex, endIndex);
+    let totalPages = 1;
     
-    res.json({ jobs: paginatedJobs, totalPages });
+    if (data.total_pages && data.total_pages > 0) {
+      totalPages = Math.min(data.total_pages, 100);
+    } else if (data.total && data.total > 0) {
+      totalPages = Math.min(Math.ceil(data.total / JOBS_PER_PAGE), 100);
+    } else if (jobs.length === JOBS_PER_PAGE) {
+      try {
+        const nextPageNum = pageNum + 1;
+        const testUrl = `${API_URL}?query=${encodeURIComponent(sanitizedQuery)}&page=${nextPageNum}&num_pages=1&country=us&date_posted=all`;
+        const testResponse = await fetch(testUrl, {
+          method: 'GET',
+          headers: {
+            'x-rapidapi-key': apiKey,
+            'x-rapidapi-host': 'jsearch.p.rapidapi.com',
+          },
+        });
+        if (testResponse.ok) {
+          const testData = (await testResponse.json()) as { data: unknown[] };
+          const testJobs = Array.isArray(testData.data) ? testData.data : [];
+          if (testJobs.length > 0) {
+            totalPages = Math.min(Math.max(pageNum + 1, 10), 100);
+          } else {
+            totalPages = pageNum;
+          }
+        } else {
+          totalPages = pageNum;
+        }
+      } catch {
+        totalPages = pageNum;
+      }
+    } else {
+      totalPages = pageNum;
+    }
+    
+    res.json({ jobs, totalPages });
   } catch (error) {
-    console.error('Error fetching job listings:', error);
     if (error instanceof Error && error.message.includes('RAPIDAPI_KEY')) {
       res.status(500).json({ 
-        error: 'API key configuration error. Please check server logs.',
+        error: 'API key configuration error',
         details: 'RAPIDAPI_KEY environment variable is not set'
       });
     } else {
-      res.status(500).json({ error: 'Something went wrong' });
+      res.status(500).json({ 
+        error: 'Failed to fetch job listings',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   }
 });

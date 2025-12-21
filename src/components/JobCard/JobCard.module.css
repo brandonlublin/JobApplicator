@@ -89,11 +89,17 @@
   opacity: 0.8;
 }
 
+.metaInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
 .salary {
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--success);
-  margin-bottom: var(--spacing-md);
   padding: var(--spacing-xs) var(--spacing-md);
   background: #ecfdf5;
   border-radius: var(--radius-md);
@@ -104,6 +110,40 @@
 [data-theme='dark'] .salary {
   background: rgba(16, 185, 129, 0.15);
   color: #6ee7b7;
+}
+
+.yearsOfExperience {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--primary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: #eef2ff;
+  border-radius: var(--radius-md);
+  display: inline-block;
+  letter-spacing: 0.01em;
+}
+
+[data-theme='dark'] .yearsOfExperience {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.postedDate {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  display: inline-block;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--gray-200);
+}
+
+[data-theme='dark'] .postedDate {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--text-secondary);
+  border-color: var(--gray-700);
 }
 
 .manuallyAdded {

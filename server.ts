@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { existsSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { connectDB } from './src/server/config/database';
 import jobsRouter from './src/server/routes/jobs';
 import appliedJobsRouter from './src/server/routes/appliedJobs';
@@ -23,10 +23,6 @@ if (isProduction) {
   const distPath = path.join(__dirname, 'dist');
   const indexPath = path.join(__dirname, 'dist', 'index.html');
   
-  if (!existsSync(distPath)) {
-    console.error('⚠️  WARNING: dist folder not found! Frontend may not be built.');
-  }
-  
   // Explicit root route handler - MUST come before static middleware
   app.get('/', (_req, res) => {
     try {
@@ -34,8 +30,7 @@ if (isProduction) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.send(htmlContent);
-    } catch (err) {
-      console.error('Error serving root:', err);
+    } catch {
       res.status(500).send('Error loading application');
     }
   });
@@ -73,10 +68,6 @@ app.use('/api', appliedJobsRouter);
 if (isProduction) {
   const indexPath = path.join(__dirname, 'dist', 'index.html');
   
-  if (!existsSync(indexPath)) {
-    console.error('CRITICAL: index.html not found at:', indexPath);
-  }
-  
   // Catch-all handler: send back React's index.html file for all non-API routes
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) {
@@ -87,8 +78,7 @@ if (isProduction) {
       const htmlContent = readFileSync(indexPath, 'utf-8');
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.send(htmlContent);
-    } catch (err) {
-      console.error('Error reading/sending index.html:', err);
+    } catch {
       if (!res.headersSent) {
         res.status(500).send('Error loading application');
       }
@@ -96,6 +86,4 @@ if (isProduction) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT);

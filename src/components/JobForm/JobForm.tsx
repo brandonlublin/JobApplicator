@@ -73,8 +73,8 @@ const JobForm = ({ onSubmit, onClose }: JobFormProps) => {
         if (logo) {
           setFormData((prev) => ({ ...prev, employer_logo: logo }));
         }
-      } catch (err) {
-        console.error('Error fetching logo:', err);
+      } catch {
+        // Silently fail - logo is optional
       } finally {
         setIsFetchingLogo(false);
       }
